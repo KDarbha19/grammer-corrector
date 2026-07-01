@@ -11,6 +11,7 @@ from transformers import(
 )
 import torch
 from difflib import SequenceMatcher
+from datasets import Dataset
 
 device = torch.device("mps")
 
@@ -89,3 +90,10 @@ print(f"Input token sample: {train_tokenized['input_ids'][0][:10]}")
 print(f"Label token sample: {train_tokenized['labels'][0][:10]}")
 
 
+#Convert tokenized dictionaries to HuggingFace Dataset objects
+train_dataset = Dataset.from_dict(train_tokenized)
+test_dataset = Dataset.from_dict(test_tokenized)
+
+print(f"Train dataset: {len(train_dataset)} samples")
+print(f"Test dataset: {len(test_dataset)} samples")
+print(f"Columns: {train_dataset.column_names}")
