@@ -97,3 +97,25 @@ test_dataset = Dataset.from_dict(test_tokenized)
 print(f"Train dataset: {len(train_dataset)} samples")
 print(f"Test dataset: {len(test_dataset)} samples")
 print(f"Columns: {train_dataset.column_names}")
+
+os.makedirs("model", exist_ok=True)
+
+training_args = TrainingArguments(
+    output_dir = "model/checkpoints",
+    num_train_epoch = 15
+    per_device_train_batch_size = 16,
+    per_device_eval_batch_size = 16,
+    warmup_steps = 50,
+    weight_decay = 0.01,
+    learning_rate = 3e-4,
+    eval_strategy = "epoch",
+    save_strategy = "epoch",
+    load_best_model_at_end = True,
+    metric_for_best_model = "eval_loss",
+    logging_steps = 10,
+    fp16 = False,
+    use_cpu = False,
+    dataloader_pin_memory = False,
+    save_total_limit = 1,
+    report_to = "none",
+)
