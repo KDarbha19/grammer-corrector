@@ -102,7 +102,7 @@ os.makedirs("model", exist_ok=True)
 
 training_args = TrainingArguments(
     output_dir = "model/checkpoints",
-    num_train_epoch = 15
+    num_train_epochs = 15,
     per_device_train_batch_size = 16,
     per_device_eval_batch_size = 16,
     warmup_steps = 50,
