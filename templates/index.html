@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang = "en">
+    <head>
+        <meta charset = "UTF-8"?
+        <meta name = "viewport" content = "width=device-width, initial-scale = 1.0">
+        <title> Grammi</title>
+        <link rel = "stylesheet" href = "/static/style.css">
+    </head>
+
+    <body>
+        <div class = "container">
+
+            <div class = "header">
+                <h1>Grammi</h1>
+                <p class = "subtitle">Paste your text below and we'll fix any grammar errors(Better than Grammarly hopefully) </p>
+            </div>
+
+            <div class = "card">
+                <label for = "inputText"> Your Text </label>
+                <textarea
+                    id = "inputText"
+                    placeholder = "Type or paste text here (up to 500 characters)"
+                    maxlength = "500"
+                ></textarea>
+                <div class = "char-count">
+                    <span id = "charCount">0</span> / 500
+                </div>
+                <button id = "correctBtn" onclick = "correctGrammar()">
+                    Fix Grammar
+                </button>
+
+            </div>
+
+            #results section is hidden until correction is ready
+            <div class = "card" id = "resultsCard" style = "display:none">
+        </div>
+    </body>
+</html>
