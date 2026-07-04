@@ -21,3 +21,40 @@ def correct_grammar(text):
         max_length = 128,
         truncation = True
     ).to(device)
+
+    with torch.no_grad(): # disables gradient tracking, saves memory and faster speed
+        outputs = model.generate(
+            **inputs,
+            max_new_tokens = 128,
+            num_beams = 4,
+            early_stopping = True,
+            no_repeat_ngram_size = 2
+        )
+
+    return tokenizer.decode(outputs[0],  skip_special_tokens = True)
+
+#compare orginal and corrected text word by word, highlight differences
+def generate_diff(original, corrected):
+    original_words = original.split()
+    corrected_words = corrected.split()
+
+    matcher = difflib.SequenceMatcher(None, original_words, corrected_words)
+    result = []
+
+    for opcode, i1,i2,j1,j2 in matcher.get_opcodes():
+        if opcode == 'equal':
+            result.append(' '.join(original_words[i1:i2]))
+        elif opcode in ('replace', 'insert'):
+            #words changes or added, wrap in green
+            result.append(
+                f'<span class="changed">{" ".join(corrected_words[j1:j2])}</span>'
+            )
+        elif opcode == 'delete':
+            #words removed, wrap in red
+            result.append(
+                f'<span class="deleted">{" ".join(original_words[i1:i2])}</span>'
+            )
+    return ' '.join(result)
+
+#routes
+                          
