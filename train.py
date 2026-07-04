@@ -97,7 +97,7 @@ test_dataset = Dataset.from_dict(test_tokenized)
 print(f"Train dataset: {len(train_dataset)} samples")
 print(f"Test dataset: {len(test_dataset)} samples")
 print(f"Columns: {train_dataset.column_names}")
-"""
+
 os.makedirs("model", exist_ok=True)
 
 training_args = TrainingArguments(
@@ -142,35 +142,4 @@ trainer.train()
 
 model.save_pretrained("model/final")
 tokenizer.save_pretrained("model/final")
-print("\nModel saved to model/final/")"""
-
-print("\n--- QUICK SANITY CHECK ---")
-loaded_tokenizer = T5Tokenizer.from_pretrained("model/final")
-loaded_model = T5ForConditionalGeneration.from_pretrained("model/final")
-loaded_model = loaded_model.to(device)
-
-test_sentences = [
-    "i goes to the store yesterday and buyed some milk",
-    "She don't know nothing about it",
-    "Their going to there house over they're",
-    "He runned very fastly to school this morning",
-    "i think this are very good product and i buyed it again"
-]
-
-for sentence in test_sentences:
-    inputs = loaded_tokenizer(
-        "fix grammar: " + sentence,
-        return_tensors="pt",
-        max_length=128,
-        truncation=True,
-    ).to(device)
-    outputs = loaded_model.generate(
-        **inputs,
-        max_new_tokens=128,
-        num_beams=4,
-        early_stopping=True,
-    )
-    result = loaded_tokenizer.decode(outputs[0], skip_special_tokens=True)
-    print(f"Input  : {sentence}")
-    print(f"Output : {result}")
-    print()
+print("\nModel saved to model/final/")
