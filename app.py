@@ -57,4 +57,29 @@ def generate_diff(original, corrected):
     return ' '.join(result)
 
 #routes
-                          
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/correct', methods=['POST'])
+def correct():
+    data = request.get_json()
+    text = data.get('text', '').strip()
+
+    if not text:
+        return jsonify({'error': 'No text provided'}), 400
+    
+    if len(text) > 500:
+        return jsonify({'error': 'Text too long - keep it under 500 characters'}), 400
+    
+    corrected = correct_grammar(text)
+    highlighted = generate_diff(text, corrected)
+
+    return jsonify({
+        'original' : text,
+        'corrected' : corrected,
+        'highlighted' : highlighted
+    })
+
+if __name__ == '__main__':
+    app.run(debug=True)
