@@ -31,7 +31,7 @@
 
             </div>
 
-            #results section is hidden until correction is ready
+            //results section is hidden until correction is ready
             <div class = "card" id = "resultsCard" style = "display:none">
 
                 <div class = "result-section">
@@ -88,20 +88,24 @@
                         body : JSON.stringify({text})
                     });
 
-                    const data = await response.json()
+                    const raw = await response.text();
+                    console.log('Raw response:', raw);
+
+                    const data = JSON.parse(raw); //await response.json()
                     if (!response.ok) {
                         showError(data.error || 'Something went wrong.');
                         return;
                     }
 
                     //populate results
-                    document.getElementById('corretedText').textContent = data.corrected;
+                    document.getElementById('correctedText').textContent = data.corrected;
                     document.getElementById('diffText').innerHTML = data.highlighted;
                     document.getElementById('resultsCard').style.display = 'block';
 
                     //Scroll to results smoothly
                     document.getElementById('resultsCard').scrollIntoView({behavior: 'smooth'});
                 } catch (err) {
+                    console.log('Error:',err);
                     showError('Could not reach the server, please try again later.');
                 } finally {
                     //Always reset/restore button
@@ -124,7 +128,7 @@
                 box.textContent = message;
                 box.style.display = 'block';
             }
-            
+
         </script>
     </body>
 </html>
