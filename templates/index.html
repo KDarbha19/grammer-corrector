@@ -33,6 +33,98 @@
 
             #results section is hidden until correction is ready
             <div class = "card" id = "resultsCard" style = "display:none">
+
+                <div class = "result-section">
+                    <label> Corrected Text</label>
+                    <div class = "result-box" id = "correctedText"></div>
+                </div>
+
+                <div class="result-section">
+                    <label>WhatChanged
+                        <span class = "legend">
+                            <span class="legend-added">■added/changed</span>
+                            <span class="legend-removed">■removed</span>
+                        </span>
+                    </label>
+                    <div class="result-box diff-box" id="diffText"></div>
+                </div>
+
+                <button class = "secondary-btn" onclick = "copyResult()">
+                    Copy Corrected Text
+                </button>
+            </div>
+
+            <div class = "error-box" id ="errorBox" style="display:none"></div>
+
         </div>
+
+        <script>
+            //Update character count as user types
+            document.getElementById('inputText').addEventListener('input', function() {
+                document.getElementById('charCount').textContent = this.value.length;
+            });
+
+            async function correctGrammar() {
+                const text = document.getElementById('inputText').value.trim();
+                const btn = document.getElementById('correctBtn');
+
+                //Hide previous results and errors
+                document.getElementById('resultsCard').style.display = 'none';
+                document.getElementById('errorBox').style.display = 'none';
+
+                if (!text) {
+                    showError('Please enter some text first!');
+                    return;
+                }
+
+                //Show loading state on button
+                btn.textContent = 'Fixing...';
+                btn.disabled = true;
+
+                try {
+                    const response = await fetch('/correct', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body : JSON.stringify({text})
+                    });
+
+                    const data = await response.json()
+                    if (!response.ok) {
+                        showError(data.error || 'Something went wrong.');
+                        return;
+                    }
+
+                    //populate results
+                    document.getElementById('corretedText').textContent = data.corrected;
+                    document.getElementById('diffText').innerHTML = data.highlighted;
+                    document.getElementById('resultsCard').style.display = 'block';
+
+                    //Scroll to results smoothly
+                    document.getElementById('resultsCard').scrollIntoView({behavior: 'smooth'});
+                } catch (err) {
+                    showError('Could not reach the server, please try again later.');
+                } finally {
+                    //Always reset/restore button
+                    btn.textContent = 'Fix Grammar';
+                    btn.disabled = false;
+                }
+            }
+
+            function copyResult() {
+                const text = document.getElementById('correctedText').textContent;
+                navigator.clipboard.writeText(text).then(() => {
+                    const btn = document.querySelector('.secondary-btn');
+                    btn.textContent = 'Copied!';
+                    setTimeout(() => btn.textContent = 'Copy Corrected Text', 2000);
+                });
+            }
+
+            function showError(message) {
+                const box = document.getElementById('errorBox');
+                box.textContent = message;
+                box.style.display = 'block';
+            }
+            
+        </script>
     </body>
 </html>
